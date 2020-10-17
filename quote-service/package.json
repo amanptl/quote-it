@@ -1,0 +1,15 @@
+{
+  "name": "quote-service",
+  "version": "1.0.0",
+  "description": "This service will search and serve quotes according to the labels.",
+  "main": "quotes.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon quotes.js"
+  },
+  "author": "Aman Patel",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
