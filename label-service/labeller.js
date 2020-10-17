@@ -30,5 +30,5 @@ app.listen(5000, async () => {
          alpha: 0.25 | .50 | .75 | 1.0,
      });
     console.log('Imagenet model loaded');
-    console.log('Server up and running!')
+    console.log('Label server is up and running!')
 })
