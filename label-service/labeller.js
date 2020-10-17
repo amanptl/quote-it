@@ -5,7 +5,7 @@ const multer = require('multer');
 const bodyParser = require('body-parser');
 const tf = require('@tensorflow/tfjs-node');
 const mobilenet = require('@tensorflow-models/mobilenet');
-//const toUint8Array = require('base64-to-unit8array');
+const toUint8Array = require('base64-to-uint8array');
 
 let model;
 const app = express();
@@ -17,6 +17,18 @@ app.use(multer({dest: '/tmp'}).any());
 
 app.get('/', (req, res) => {
     res.send("Sever is running")
+});
+
+app.post('/predict', async(req, res) => {
+    const imageData = fs.readFileSync(req.files[0].path)
+        .toString('base64')
+        .replace('data:image/jpg;base64', '')
+        .replace('data:image/png', '');
+    const imageArray = toUint8Array(imageData);
+    const tensor = tf.node.decodeJpeg( imageArray, 3 );
+    const prediction = await model.classify(tensor);
+    tensor.dispose();
+    res.send(prediction[0].className);
 });
 
 app.get('*', (req, res) => {
