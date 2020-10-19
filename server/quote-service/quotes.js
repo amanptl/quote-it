@@ -16,7 +16,7 @@ app.get('/quotes', (req, res) => {
   const options = {
       url: 'https://api.paperquotes.com/apiv1/quotes/?tags=hair,potrait&curated=1',
       headers: {
-        'Authorization': 'Token 46512a1ab44bdcaf07dbc9ff7707634d086cdf7e'
+        'Authorization': process.env.QUOTES_API
       },
       params: {
         'tags': tag
