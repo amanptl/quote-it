@@ -19,6 +19,8 @@ app.get('/', (req, res) => {
     res.send("Sever is running")
 });
 
+// https://api.paperquotes.com/apiv1/quotes/?tags=hair,potrait&curated=1 (headers- Authorization: Token 46512a1ab44bdcaf07dbc9ff7707634d086cdf7e)
+
 app.post('/predict', async(req, res) => {
     const imageData = fs.readFileSync(req.files[0].path)
         .toString('base64')
@@ -26,9 +28,10 @@ app.post('/predict', async(req, res) => {
         .replace('data:image/png', '');
     const imageArray = toUint8Array(imageData);
     const tensor = tf.node.decodeJpeg( imageArray, 3 );
-    const prediction = await model.classify(tensor);
+    const prediction = await model.classify( tensor, 3 );
+    // const prediction = await model.classify(tensor);
     tensor.dispose();
-    res.send(prediction[0].className);
+    res.send(prediction);
 });
 
 app.get('*', (req, res) => {
@@ -38,8 +41,8 @@ app.get('*', (req, res) => {
 app.listen(5000, async () => {
     console.log('Loading imagenet model');
      model = await mobilenet.load({
-         version: 1,
-         alpha: 0.25 | .50 | .75 | 1.0,
+         version: 2,
+         alpha: 1.0,
      });
     console.log('Imagenet model loaded');
     console.log('Label server is up and running!')
