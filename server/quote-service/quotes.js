@@ -26,7 +26,7 @@ app.get('/quotes', (req, res) => {
       if (!error && response.statusCode == 200) {
         res.send(body)
       };
-      res.send('Something went wrong.')
+      res.send(response.statusCode)
     });
 });
 
