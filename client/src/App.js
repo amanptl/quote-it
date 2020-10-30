@@ -1,30 +1,77 @@
-import React, { Component } from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-import store from "./store";
+import React, { useState, useCallback } from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+  Redirect,
+  Switch
+} from 'react-router-dom';
 
-import "./App.css";
-import Navbar from "./components/layout/Navbar";
-import Landing from "./components/layout/Landing";
-import Register from "./components/auth/Register";
-import Login from "./components/auth/Login";
+import Users from './user/pages/Users';
+import NewPlace from './places/pages/NewPlace';
+import UserPlaces from './places/pages/UserPlaces';
+import UpdatePlace from './places/pages/UpdatePlace';
+import Auth from './user/pages/Auth';
+import MainNavigation from './shared/components/Navigation/MainNavigation';
+import { AuthContext } from './shared/context/auth-context';
 
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-class App extends Component {
-render(){
+  const login = useCallback(() => {
+    setIsLoggedIn(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    setIsLoggedIn(false);
+  }, []);
+
+  let routes;
+
+  if (isLoggedIn) {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          <Users />
+        </Route>
+        <Route path="/:userId/places" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/places/new" exact>
+          <NewPlace />
+        </Route>
+        <Route path="/places/:placeId">
+          <UpdatePlace />
+        </Route>
+        <Redirect to="/" />
+      </Switch>
+    );
+  } else {
+    routes = (
+      <Switch>
+        <Route path="/" exact>
+          <Users />
+        </Route>
+        <Route path="/:userId/places" exact>
+          <UserPlaces />
+        </Route>
+        <Route path="/auth">
+          <Auth />
+        </Route>
+        <Redirect to="/auth" />
+      </Switch>
+    );
+  }
+
   return (
-    <Provider store={store}>
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Route exact path="/" component={Landing} />
-        <Route exact path="/register" component={Register} />
-        <Route exact path="/login" component={Login} />
-      </div>
-    </Router>
-    </Provider>
+    <AuthContext.Provider
+      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+    >
+      <Router>
+        <MainNavigation />
+        <main>{routes}</main>
+      </Router>
+    </AuthContext.Provider>
   );
-}
-}
+};
 
 export default App;
