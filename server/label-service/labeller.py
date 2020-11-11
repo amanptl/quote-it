@@ -53,7 +53,7 @@ def get_predictions(image):
   hash_tags = []
   top_n_indices = np.argpartition(prediction, -top_n)[-top_n:]
   for top_n_index in top_n_indices:
-      hash_tags.append('#' + tags[top_n_index])
+      hash_tags.append(tags[top_n_index])
   return hash_tags
 
 @app.route("/predict", methods=["GET", "POST"])
