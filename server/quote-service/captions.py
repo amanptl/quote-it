@@ -23,7 +23,7 @@ def connect_db():
 
 @app.route("/quotes", methods=["GET"])
 def get_captions():
-    query = ("select tags, caption from cap_tag_arr where tags && %s order by tags offset 0;")
+    query = ("select tags, caption from captions where tags && %s order by tags offset 0;")
     tags = request.args.getlist('tags')[0].split(',')
     cur.execute(query, (tags,))
     result = cur.fetchall()
