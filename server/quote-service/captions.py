@@ -23,15 +23,19 @@ def connect_db():
 
 @app.route("/quotes", methods=["GET"])
 def get_captions():
-    query = ("select tags, caption from captions where tags && %s order by tags offset 0;")
+    #query = ("select tags, caption from captions where tags && %s order by tags offset 0;")
+    query = ("select caption from captions where tags && %s order by tags offset 0;")
     tags = request.args.getlist('tags')[0].split(',')
     cur.execute(query, (tags,))
     result = cur.fetchall()
     response = []
-    for tags, caption in result:
+    #for tags, caption in result:
+    for index, caption in enumerate(result):
         item = dict()
-        item['caption'] = caption
-        item['tags'] = " ".join(['#' + tag for tag in tags])
+        item['id'] = index
+        item['caption']  = caption[0]
+        item['caption'] += '\n.\n.\n.\n'
+        item['caption'] += " ".join(['#' + tag for tag in tags])
         response.append(item)
     return jsonify(response)
 
