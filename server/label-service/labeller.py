@@ -29,15 +29,7 @@ def precision(y_true, y_pred):
 def f1(y_true, y_pred):
   p = precision(y_true, y_pred)
   r = recall(y_true, y_pred)
-  return 2*((p*r)/(p+r+K.epsilon()))
-
-def initialize_service():
-  global model
-  model = load_model('model/model.h5', custom_objects={"f1": f1,
-                                                       "recall": recall,
-                                                       "precision": precision})
-  global tags
-  tags = np.load('model/tags.npy')                                                       
+  return 2*((p*r)/(p+r+K.epsilon()))                                                     
 
 def prepare_image(image, target):
   image = Image.open(io.BytesIO(image))
@@ -64,6 +56,14 @@ def predict():
     data["predictions"] = result
     data["success"] = True
     return flask.jsonify(data)    
+
+def initialize_service():
+  global model
+  model = load_model('model/model.h5', custom_objects={"f1": f1,
+                                                       "recall": recall,
+                                                       "precision": precision})
+  global tags
+  tags = np.load('model/tags.npy')  
  
 if __name__ == "__main__":
   print("[INFO] Loading model.")
