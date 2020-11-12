@@ -1,6 +1,6 @@
 # import the psycopg2 database adapter for PostgreSQL
 from psycopg2 import connect, Error
-
+import pandas as pd
 # import Python's built-in JSON library
 import json
 
@@ -14,32 +14,28 @@ from psycopg2.extras import json as psycop_json
 try:
     # declare a new PostgreSQL connection object
     conn = connect(
-        dbname = "",
-        user = "",
-        host = "",
-        password = "",
+        dbname = "caption_tag",
+        user = "postgres",
+        host = "127.0.0.1",
+        password = "aman",
         # attempt to connect for 3 seconds then raise exception
         connect_timeout = 3
     )
-
     cur = conn.cursor()
     print ("\ncreated cursor object:", cur)
-
 except (Exception, Error) as err:
     print ("\npsycopg2 connect error:", err)
     conn = None
     cur = None
 
-filename = ''
-try:
-    with open(filename, 'rb') as f:
-        rows = pickle.load(f)
-except Error as err:
-    print("Cannot load pickle file: ", err)
-
-query = ("insert into TABLE (COL1,COL2) values (%s,%s) returning ID;")
-for row in rows:
-    cur.execute(query, row)
+query = ("insert into captions (caption,tags) values (%s,%s);")
+filename = 'C:/Users/Aman/Downloads/quotesdrivedb.csv'
+columns = ['caption', 'author', 'tags']
+df = pd.read_csv(filename, usecols=[0,2])
+df = df.dropna()
+for index, row in df.iterrows():
+    data = (row[0], row[1].split(','))
+    cur.execute(query, data)
 conn.commit()
 
 
