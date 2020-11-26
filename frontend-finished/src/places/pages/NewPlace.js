@@ -34,7 +34,8 @@ const NewPlace = () => {
       },
       image: {
         value: null,
-        isValid: false
+        isValid: false,
+        captions: "hello"
       }
     },
     false
@@ -92,6 +93,7 @@ const NewPlace = () => {
           onInput={inputHandler}
           errorText="Please provide an image."
         />
+        {console.log(formState.inputs.image.captions)}
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE
         </Button>

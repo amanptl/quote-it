@@ -10,8 +10,10 @@ from keras.applications.mobilenet_v2 import preprocess_input
 from PIL import Image
 import io
 from psycopg2 import connect, Error
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 model = None
 tags = None
 
@@ -93,6 +95,7 @@ def predict():
     result = get_captions(tags)
     data["predictions"] = result
     data["success"] = True
+    print(data)
     return jsonify(data)    
 
 def initialize_service():
@@ -108,4 +111,4 @@ if __name__ == "__main__":
   initialize_service()
   connect_db()
   print("[INFO] Model loaded.")
-  app.run(port=5000, debug=True)
+  app.run(port=4000, debug=True)

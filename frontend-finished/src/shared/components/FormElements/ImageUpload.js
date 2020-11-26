@@ -8,6 +8,8 @@ const ImageUpload = props => {
   const [previewUrl, setPreviewUrl] = useState();
   const [isValid, setIsValid] = useState(false);
 
+  //const [captions, setCaptions] = useState(null);
+
   const filePickerRef = useRef();
 
   useEffect(() => {
@@ -21,6 +23,28 @@ const ImageUpload = props => {
     fileReader.readAsDataURL(file);
   }, [file]);
 
+    function onChangeFile(event, fileIsValid, _callback) {
+        if(fileIsValid){
+          const reader = new FileReader();
+          reader.readAsDataURL(event.target.files[0]);
+
+          const payload = new FormData();
+          payload.append('image', event.target.files[0]);
+          
+          const xhr = new XMLHttpRequest();
+          
+          xhr.onreadystatechange = () => {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                  _callback(xhr.responseText)
+              }
+          };
+
+          xhr.open('POST', 'http://localhost:4000/predict');
+          xhr.send(payload);
+        }
+        event.preventDefault();
+    }
+
   const pickedHandler = event => {
     let pickedFile;
     let fileIsValid = isValid;
@@ -33,6 +57,10 @@ const ImageUpload = props => {
       setIsValid(false);
       fileIsValid = false;
     }
+    onChangeFile(event, fileIsValid, function(captions) {
+      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!CAPTIONS are here
+      console.log(captions)
+    })
     props.onInput(props.id, pickedFile, fileIsValid);
   };
 
