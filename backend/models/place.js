@@ -11,6 +11,7 @@ const placeSchema = new Schema({
     lat: { type: Number, required: true },
     lng: { type: Number, required: true }
   },
+  imagecaption:{type: String, required:false},
   creator: { type: mongoose.Types.ObjectId, required: true, ref: 'User' }
 });
 

@@ -8,7 +8,6 @@ const ImageUpload = props => {
   const [previewUrl, setPreviewUrl] = useState();
   const [isValid, setIsValid] = useState(false);
 
-  //const [captions, setCaptions] = useState(null);
 
   const filePickerRef = useRef();
 
@@ -23,11 +22,11 @@ const ImageUpload = props => {
     fileReader.readAsDataURL(file);
   }, [file]);
 
-    function onChangeFile(event, fileIsValid, _callback) {
+async    function onChangeFile(event, fileIsValid) {
+  event.preventDefault();
+    return new Promise(
+      (res,rej) => {
         if(fileIsValid){
-          const reader = new FileReader();
-          reader.readAsDataURL(event.target.files[0]);
-
           const payload = new FormData();
           payload.append('image', event.target.files[0]);
           
@@ -35,33 +34,46 @@ const ImageUpload = props => {
           
           xhr.onreadystatechange = () => {
               if (xhr.readyState === 4 && xhr.status === 200) {
-                  _callback(xhr.responseText)
+                  res(xhr.responseText)
               }
-          };
+              
+          }
+           xhr.onerror=()=>{
+             rej(undefined)
+           }
 
           xhr.open('POST', 'http://localhost:4000/predict');
           xhr.send(payload);
+        }else{
+          rej(undefined)
         }
-        event.preventDefault();
+      }
+    )
+        
+        
     }
 
-  const pickedHandler = event => {
+  const pickedHandler = async (event) => {
     let pickedFile;
     let fileIsValid = isValid;
+    let caption='';
     if (event.target.files && event.target.files.length === 1) {
       pickedFile = event.target.files[0];
       setFile(pickedFile);
       setIsValid(true);
       fileIsValid = true;
+      try{
+        caption= await onChangeFile(event, fileIsValid)
+      }catch{
+        caption='';
+      }
+     
     } else {
       setIsValid(false);
       fileIsValid = false;
     }
-    onChangeFile(event, fileIsValid, function(captions) {
-      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!CAPTIONS are here
-      console.log(captions)
-    })
-    props.onInput(props.id, pickedFile, fileIsValid);
+    
+    props.onInput(props.id, pickedFile, fileIsValid, caption);
   };
 
   const pickImageHandler = () => {

@@ -10,6 +10,7 @@ import { AuthContext } from '../../shared/context/auth-context';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import './PlaceItem.css';
 
+
 const PlaceItem = props => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
@@ -92,6 +93,7 @@ const PlaceItem = props => {
             <h2>{props.title}</h2>
             <h3>{props.address}</h3>
             <p>{props.description}</p>
+            <p>{props.imagecaption || '-'}</p>
   
           </div>
           <div className="place-item__actions">

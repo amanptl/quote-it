@@ -75,7 +75,7 @@ const createPlace = async (req, res, next) => {
   let coordinates;
   try {
     coordinates = await getCoordsForAddress(address);
-    console.log(coordinates)
+    
   } catch (error) {
     return next(error);
   }
@@ -86,9 +86,9 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
+    imagecaption : req.body.imagecaption,
     creator: req.userData.userId
   });
-  console.log(createdPlace)
   let user;
   try {
     user = await User.findById(req.userData.userId);
@@ -105,7 +105,6 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  console.log(user);
 
   try {
 
@@ -202,12 +201,12 @@ const deletePlace = async (req, res, next) => {
   const imagePath = place.image;
 
   try {
-    const sess = await mongoose.startSession();
-    sess.startTransaction();
-    await place.remove({ session: sess });
+    // const sess = await mongoose.startSession();
+    // sess.startTransaction();
+    await place.remove();
     place.creator.places.pull(place);
-    await place.creator.save({ session: sess });
-    await sess.commitTransaction();
+    await place.creator.save();
+    // await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
       'Something went wrong, could not delete place.',
