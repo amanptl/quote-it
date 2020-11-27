@@ -49,7 +49,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    `mongodb+srv://Psquare:P@rth210497@cluster0.wlhdm.mongodb.net/test?retryWrites=true&w=majority`,{useNewUrlParser: true}
+    `YOUR MONGO DB URL`,{useNewUrlParser: true}
   )
   .then(() => {
     app.listen(5000);
